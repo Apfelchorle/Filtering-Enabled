@@ -1,0 +1,135 @@
+-- Create the Screen GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "AdminGUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create the main frame
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 400, 0, 600)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -300)
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black background
+MainFrame.BorderSizePixel = 0
+MainFrame.Parent = ScreenGui
+
+-- Create the dynamic border
+local Border = Instance.new("Frame")
+Border.Size = UDim2.new(1, 10, 1, 10) -- Thin border on the edges
+Border.Position = UDim2.new(0, -5, 0, -5)
+Border.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- White color
+Border.BorderSizePixel = 0
+Border.Parent = MainFrame
+
+-- Function to smoothly change border color
+local function changeBorderColor()
+    local colors = {
+        Color3.fromRGB(255, 0, 0),
+        Color3.fromRGB(255, 127, 0),
+        Color3.fromRGB(255, 255, 0),
+        Color3.fromRGB(0, 255, 0),
+        Color3.fromRGB(0, 0, 255),
+        Color3.fromRGB(75, 0, 130),
+        Color3.fromRGB(148, 0, 211)
+    }
+    
+    while true do
+        for _, color in ipairs(colors) do
+            for i = 0, 1, 0.01 do
+                Border.BackgroundColor3 = color:Lerp(Color3.fromRGB(0, 0, 0), i) -- Smooth transition
+                wait(0.05) -- Adjust wait time for speed
+            end
+        end
+    end
+end
+
+-- Start the color changing function
+spawn(changeBorderColor)
+
+-- Create the tabs
+local TabContainer = Instance.new("Frame")
+TabContainer.Size = UDim2.new(1, 0, 0, 40)
+TabContainer.Position = UDim2.new(0, 0, 0, 0)
+TabContainer.BackgroundTransparency = 1
+TabContainer.Parent = MainFrame
+
+local Tab1 = Instance.new("TextButton")
+Tab1.Size = UDim2.new(0, 200, 0, 40)
+Tab1.Position = UDim2.new(0, 0, 0, 0)
+Tab1.Text = "Tab 1"
+Tab1.TextColor3 = Color3.fromRGB(255, 255, 255)
+Tab1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Tab1.Parent = TabContainer
+
+local Tab2 = Instance.new("TextButton")
+Tab2.Size = UDim2.new(0, 200, 0, 40)
+Tab2.Position = UDim2.new(0, 200, 0, 0)
+Tab2.Text = "Tab 2"
+Tab2.TextColor3 = Color3.fromRGB(255, 255, 255)
+Tab2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Tab2.Parent = TabContainer
+
+-- Create the webhook input
+local WebhookInput = Instance.new("TextBox")
+WebhookInput.Size = UDim2.new(1, 0, 0, 40)
+WebhookInput.Position = UDim2.new(0, 0, 0, 40)
+WebhookInput.PlaceholderText = "Enter Discord Webhook URL"
+WebhookInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+WebhookInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+WebhookInput.Parent = MainFrame
+
+-- Functionality for the tabs
+local function onTabClicked(tab)
+    for _, child in ipairs(MainFrame:GetChildren()) do
+        if child:IsA("Frame") and child ~= TabContainer and child ~= Border and child ~= WebhookInput then
+            child.Visible = false
+        end
+    end
+
+    -- Show content based on the selected tab
+    if tab == "Tab1" then
+        -- Create Tab 1 content here
+        local Tab1Content = Instance.new("Frame")
+        Tab1Content.Size = UDim2.new(1, 0, 1, -80) -- Adjusted size to fit below tabs
+        Tab1Content.Position = UDim2.new(0, 0, 0, 80)
+        Tab1Content.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- Change as needed
+        Tab1Content.Parent = MainFrame
+    elseif tab == "Tab2" then
+        -- Create Tab 2 content here
+        local Tab2Content = Instance.new("Frame")
+        Tab2Content.Size = UDim2.new(1, 0, 1, -80)
+        Tab2Content.Position = UDim2.new(0, 0, 0, 80)
+        Tab2Content.BackgroundColor3 = Color3.fromRGB(200, 200, 200) -- Change as needed
+        Tab2Content.Parent = MainFrame
+    end
+end
+
+Tab1.MouseButton1Click:Connect(function() onTabClicked("Tab1") end)
+Tab2.MouseButton1Click:Connect(function() onTabClicked("Tab2") end)
+
+-- Show the first tab by default
+onTabClicked("Tab1")
+
+-- Function to send status to Discord
+local function sendStatusToDiscord(webhookUrl, status)
+    local HttpService = game:GetService("HttpService")
+    local data = {
+        content = status
+    }
+    
+    local jsonData = HttpService:JSONEncode(data)
+    HttpService:PostAsync(webhookUrl, jsonData, Enum.HttpContentType.ApplicationJson)
+end
+
+-- Function to check if the webhook URL is valid and send status
+local function monitorStatus()
+    local webhookUrl = WebhookInput.Text
+    while true do
+        if webhookUrl ~= "" then
+            sendStatusToDiscord(webhookUrl, "Admin GUI Loaded and Running.")
+        end
+        wait(20) -- Wait 20 seconds before sending the next status
+    end
+end
+
+-- Start monitoring the status
+spawn(monitorStatus)
