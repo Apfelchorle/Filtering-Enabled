@@ -1,0 +1,44 @@
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+screenGui.ZIndex = 2 -- Higher ZIndex for the GUI
+
+-- Create Frame (the black box)
+local blackBox = Instance.new("Frame")
+blackBox.Size = UDim2.new(0, 150, 0, 75) -- Size of the box
+blackBox.Position = UDim2.new(0.5, -75, 0.5, -37.5) -- Centered on screen
+blackBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black color
+blackBox.BackgroundTransparency = 0.5 -- Slight transparency
+blackBox.ZIndex = 2 -- Ensure the box is above the border
+blackBox.Parent = screenGui
+
+-- Create Border
+local borderThickness = 4 -- Thickness of the border
+local border = Instance.new("Frame")
+border.Size = UDim2.new(1, borderThickness * 2, 1, borderThickness * 2) -- Adjusted for border
+border.Position = UDim2.new(0, -borderThickness, 0, -borderThickness) -- Centered with respect to the box
+border.BackgroundColor3 = Color3.new(1, 1, 1) -- Initial border color (white)
+border.ZIndex = 1 -- Lower ZIndex for the border
+border.Parent = screenGui
+
+-- Dynamic Color Changing Function
+local colors = {
+    Color3.fromRGB(255, 0, 0),
+    Color3.fromRGB(0, 255, 0),
+    Color3.fromRGB(0, 0, 255),
+    Color3.fromRGB(255, 255, 0),
+    Color3.fromRGB(0, 255, 255),
+    Color3.fromRGB(255, 0, 255)
+}
+
+local colorIndex = 1
+local function changeBorderColor()
+    while true do
+        border.BackgroundColor3 = colors[colorIndex]
+        colorIndex = (colorIndex % #colors) + 1
+        wait(1) -- Change color every second
+    end
+end
+
+-- Start color changing
+changeBorderColor()
